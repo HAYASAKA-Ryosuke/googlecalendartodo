@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/spf13/cobra"
+
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
 )
@@ -38,5 +40,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to retrieve Calendar client: %v", err)
 	}
-	showEvents(srv)
+	var cmdList = &cobra.Command{
+		Use:   "show",
+		Short: "show list",
+		Run: func(cmd *cobra.Command, args []string) {
+			showEvents(srv)
+		},
+	}
+	var rootCmd = &cobra.Command{Use: "app"}
+	rootCmd.AddCommand(cmdList)
+	rootCmd.Execute()
 }
