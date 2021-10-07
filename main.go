@@ -10,14 +10,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func main() {
-	ctx := context.Background()
-	client := NewClient()
-	srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		log.Fatalf("Unable to retrieve Calendar client: %v", err)
-	}
-
+func showEvents(srv *calendar.Service) {
 	t := time.Now().Format(time.RFC3339)
 	events, err := srv.Events.List("primary").ShowDeleted(false).
 		SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
@@ -36,4 +29,14 @@ func main() {
 			fmt.Printf("%v (%v)\n", item.Summary, date)
 		}
 	}
+}
+
+func main() {
+	ctx := context.Background()
+	client := NewClient()
+	srv, err := calendar.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		log.Fatalf("Unable to retrieve Calendar client: %v", err)
+	}
+	showEvents(srv)
 }
